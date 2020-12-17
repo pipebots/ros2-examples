@@ -1,0 +1,8 @@
+# Goal definition
+float32 litres_to_pump
+---
+# Result definition
+float32 litres_pumped
+---
+# Feedback
+float32 litres_pumped
