@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(leeds_pump_single_publisher_server)
+project(leeds_pump_single_action_server)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -18,13 +18,15 @@ find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(leeds_pump_msgs REQUIRED)
 
-# The Leeds pump.
+
+# The combined Leeds Pump.
 set(SRC_FILES
   src/leeds_pump.cpp
-  src/status_node.cpp
+  src/pump_node.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -pedantic)
 endif()
@@ -36,6 +38,7 @@ ament_target_dependencies(${PROJECT_NAME}
   leeds_pump_msgs
 )
 
+# Testing
 if(BUILD_TESTING)
   # Linting
   find_package(ament_lint_auto REQUIRED)

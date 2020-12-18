@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>leeds_pump_single_publisher_server</name>
+  <name>leeds_pump_single_action_server</name>
   <version>0.0.0</version>
-  <description>The Leeds Pump example single publisher</description>
+  <description>Leeds Pump single action server example</description>
   <maintainer email="a.j.blight@leeds.ac.uk">Andy Blight</maintainer>
   <license>MIT</license>
 

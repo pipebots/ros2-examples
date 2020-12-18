@@ -31,8 +31,8 @@ endif()
 
 ament_target_dependencies(${PROJECT_NAME}
   rclcpp
-  rclcpp_components
   rclcpp_action
+  rclcpp_components
   leeds_pump_msgs
 )
 
