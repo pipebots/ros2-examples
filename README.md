@@ -15,13 +15,12 @@ logging calls to make it more obvious how it all fits together.
 
 The following demos have been implemented:
 
-NONE
+* Combined server that has a message publisher, service server and
+action server with a client that uses all three interfaces.
 
 TODO:
 
 * A server offering a status message publisher with a client with a message subscriber.
 * A server offering a single service with a client that uses that service.
 * A server offering a single action with a client that uses that action.
-* Combined server that has a message publisher, service server and
-action server with a client that uses all three interfaces.
-
+* Launch files for all examples.

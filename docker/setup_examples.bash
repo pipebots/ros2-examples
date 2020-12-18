@@ -8,7 +8,7 @@ cd ~/ws/src
 CODE_DIR=${HOME}/code
 ln -sf ${CODE_DIR}/combined
 ln -sf ${CODE_DIR}/leeds_pump_msgs
-# ln -sf ${CODE_DIR}/single
+ln -sf ${CODE_DIR}/single
 
 # Build the packages.
 cd ~/ws
