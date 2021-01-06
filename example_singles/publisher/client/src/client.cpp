@@ -31,13 +31,16 @@
 // Static vars for sharing objects with RunTests().
 static std::shared_ptr<StatusSubscriber> status_client;
 
+// Pointer to executor so that the spin loop can be kill by the thread.
+static rclcpp::executors::SingleThreadedExecutor * exec;
+
 /**
  * @brief Blocks until the server is ready.
  * @return true if terminated, false on success.
  */
 bool WaitForServer()
 {
-  RCLCPP_INFO(rclcpp::get_logger("client"), "%s Waiting for server...", __FUNCTION__);
+  RCLCPP_INFO(rclcpp::get_logger("client"), "%s: Waiting for server...", __FUNCTION__);
   bool terminated = true;
   // Wait for gimbal service.
   const std::chrono::milliseconds kWaitDelayMs(250);
@@ -50,14 +53,14 @@ bool WaitForServer()
   if (rclcpp::ok()) {
     RCLCPP_INFO(
       rclcpp::get_logger(
-        "client"), "%s status publisher ready", __FUNCTION__);
+        "client"), "%s: status publisher ready", __FUNCTION__);
     // Wait for the micro-controller to be connected.
     bool status_connected = false;
     do {
       status_connected = status_client->connected();
       std::this_thread::sleep_for(kWaitDelayMs);
     } while (!status_connected && rclcpp::ok());
-    RCLCPP_INFO(rclcpp::get_logger("client"), "%s connected", __FUNCTION__);
+    RCLCPP_INFO(rclcpp::get_logger("client"), "%s: connected", __FUNCTION__);
     if (rclcpp::ok()) {
       terminated = false;
     }
@@ -69,21 +72,28 @@ void RunExamples()
 {
   RCLCPP_INFO(rclcpp::get_logger("client"), "Examples started.");
   bool terminated = WaitForServer();
-  if (!terminated) {
+  if (terminated) {
+    RCLCPP_INFO(rclcpp::get_logger("client"), "Examples terminated early.");
+  } else {
     // Listen to the status client for 30 loops then quit.
     // This should show logging output from the server and client.
+    RCLCPP_INFO(rclcpp::get_logger("client"), "Waiting for 30 loops.");
+    RCLCPP_INFO(rclcpp::get_logger("client"), "Press Ctrl+c to exit early.");
     int loop_count = 0;
     bool status_ready = false;
-    const std::chrono::milliseconds kWaitDelayMs(1000);
+    const std::chrono::milliseconds kWaitDelayMs(500);
     do {
       status_ready = status_client->IsServerReady();
       std::this_thread::sleep_for(kWaitDelayMs);
-    } while (!status_ready && rclcpp::ok() && loop_count < 30);
+      ++loop_count;
+      RCLCPP_INFO(rclcpp::get_logger("client"),
+        "%s: status_ready %d, loop_count %d",
+        __func__, status_ready, loop_count);
+    } while (status_ready && rclcpp::ok() && loop_count < 30);
+    // Stop the spin loop to automatically quit.
+    exec->cancel();
+    RCLCPP_INFO(rclcpp::get_logger("client"), "Completed example :-)");
   }
-  if (terminated) {
-    RCLCPP_INFO(rclcpp::get_logger("client"), "Examples terminated early.");
-  }
-  RCLCPP_INFO(rclcpp::get_logger("client"), "Press Ctrl+c to exit.");
 }
 
 int main(int argc, char * argv[])
@@ -91,13 +101,14 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
   status_client = std::make_shared<StatusSubscriber>();
   // Add nodes to executor.
-  rclcpp::executors::SingleThreadedExecutor exec;
-  exec.add_node(status_client);
+  exec = new rclcpp::executors::SingleThreadedExecutor();
+  exec->add_node(status_client);
   // Start thread to exercise the service and action clients.
   auto test_thread = new std::thread(&RunExamples);
   // Start the nodes (blocks until Ctrl-c).
-  exec.spin();
+  exec->spin();
   // Tidy up.
+  delete exec;
   test_thread->join();
   delete test_thread;
   // Make sure clients are destroyed before shutdown.

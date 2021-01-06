@@ -60,7 +60,7 @@ void StatusSubscriber::StatusCallback(const example_msgs::msg::Status::SharedPtr
   running_ = msg->running;
   litres_remaining_ = msg->litres_remaining;
   last_callback_time_ = now();
-  RCLCPP_DEBUG(
+  RCLCPP_INFO(
     get_logger(), "%s: connected %d, running %d, litres remaining %f",
     __FUNCTION__, connected_, running_, litres_remaining_);
 }
