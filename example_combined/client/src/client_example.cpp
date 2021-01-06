@@ -67,7 +67,8 @@ bool WaitForServer()
         std::this_thread::sleep_for(kWaitDelayMs);
       } while (!status_ready && rclcpp::ok());
       if (rclcpp::ok()) {
-        RCLCPP_INFO(rclcpp::get_logger(
+        RCLCPP_INFO(
+          rclcpp::get_logger(
             "client"), "%s status publisher ready", __FUNCTION__);
         // Wait for the micro-controller to be connected.
         bool status_connected = false;
@@ -91,19 +92,23 @@ bool RunGimbalExample()
   // Set pitch to -10, yaw to +20
   int pitch = -10;
   int yaw = +20;
-  RCLCPP_INFO(rclcpp::get_logger(
+  RCLCPP_INFO(
+    rclcpp::get_logger(
       "client"), "Gimbal being moved to pitch %d, yaw %d.", pitch, yaw);
   int result = gimbal_client->Move(&pitch, &yaw);
-  RCLCPP_INFO(rclcpp::get_logger(
+  RCLCPP_INFO(
+    rclcpp::get_logger(
       "client"), "Gimbal moved to pitch %d, yaw %d.", pitch, yaw);
   if (result && rclcpp::ok()) {
     // Move gimbal again.
     pitch = +80;
     yaw = -70;
-    RCLCPP_INFO(rclcpp::get_logger(
+    RCLCPP_INFO(
+      rclcpp::get_logger(
         "client"), "Gimbal being moved to pitch %d, yaw %d.", pitch, yaw);
     result = gimbal_client->Move(&pitch, &yaw);
-    RCLCPP_INFO(rclcpp::get_logger(
+    RCLCPP_INFO(
+      rclcpp::get_logger(
         "client"), "Gimbal moved to pitch %d, yaw %d.", pitch, yaw);
     if (rclcpp::ok()) {
       if (result && rclcpp::ok()) {
@@ -125,7 +130,8 @@ static bool pump_example_done = false;
 void PumpExampleCallback(bool done, float litres_pumped)
 {
   pump_example_done = done;
-  RCLCPP_INFO(rclcpp::get_logger("client"), "%s pumped %f litres",
+  RCLCPP_INFO(
+    rclcpp::get_logger("client"), "%s pumped %f litres",
     __FUNCTION__, litres_pumped);
 }
 
@@ -172,7 +178,8 @@ bool RunPumpExample()
         // The status can take 500ms to arrive so wait.
         std::this_thread::sleep_for(kStatusDelay);
         float end_level_l = status_client->litres_remaining();
-        RCLCPP_INFO(rclcpp::get_logger("client"), "Used %fl",
+        RCLCPP_INFO(
+          rclcpp::get_logger("client"), "Used %fl",
           start_level_l - end_level_l);
       }
     }

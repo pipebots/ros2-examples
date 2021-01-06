@@ -35,8 +35,10 @@ GimbalNode::GimbalNode(rclcpp::NodeOptions options)
 : Node("gimbal_node", options), comms_(nullptr)
 {
   server_ =
-    create_service<example_msgs::srv::Gimbal>(kGimbalServiceName,
-      std::bind(&GimbalNode::HandleService, this,
+    create_service<example_msgs::srv::Gimbal>(
+    kGimbalServiceName,
+    std::bind(
+      &GimbalNode::HandleService, this,
       std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 

@@ -66,8 +66,9 @@ void PumpActionClient::SendGoal(float litres_to_pump, callback_t callback_functi
   send_goal_options.goal_response_callback =
     std::bind(&PumpActionClient::GoalResponseCallback, this, std::placeholders::_1);
   send_goal_options.feedback_callback =
-    std::bind(&PumpActionClient::FeedbackCallback, this, std::placeholders::_1,
-      std::placeholders::_2);
+    std::bind(
+    &PumpActionClient::FeedbackCallback, this, std::placeholders::_1,
+    std::placeholders::_2);
   send_goal_options.result_callback =
     std::bind(&PumpActionClient::ResultCallback, this, std::placeholders::_1);
   auto goal_handle_future = client_->async_send_goal(goal_msg, send_goal_options);

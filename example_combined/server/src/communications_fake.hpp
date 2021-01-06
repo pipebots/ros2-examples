@@ -44,7 +44,6 @@ public:
 
 private:
   // None.
-
 };  // CommunicationsFake
 
 #endif  // COMMUNICATIONS_FAKE_HPP_

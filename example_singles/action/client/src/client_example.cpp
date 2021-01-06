@@ -58,7 +58,8 @@ bool WaitForServer()
 void PumpExampleCallback(bool done, float litres_pumped)
 {
   pump_example_done = done;
-  RCLCPP_INFO(rclcpp::get_logger("client"), "%s pumped %f litres",
+  RCLCPP_INFO(
+    rclcpp::get_logger("client"), "%s pumped %f litres",
     __FUNCTION__, litres_pumped);
 }
 

@@ -45,8 +45,9 @@ PumpNode::PumpNode(rclcpp::NodeOptions options)
     get_node_logging_interface(),
     get_node_waitables_interface(),
     kPumpActionName,
-    std::bind(&PumpNode::Goal, this,
-    std::placeholders::_1, std::placeholders::_2),
+    std::bind(
+      &PumpNode::Goal, this,
+      std::placeholders::_1, std::placeholders::_2),
     std::bind(&PumpNode::Cancel, this, std::placeholders::_1),
     std::bind(&PumpNode::Accepted, this, std::placeholders::_1));
 }

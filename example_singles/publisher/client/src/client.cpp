@@ -48,7 +48,8 @@ bool WaitForServer()
     std::this_thread::sleep_for(kWaitDelayMs);
   } while (!status_ready && rclcpp::ok());
   if (rclcpp::ok()) {
-    RCLCPP_INFO(rclcpp::get_logger(
+    RCLCPP_INFO(
+      rclcpp::get_logger(
         "client"), "%s status publisher ready", __FUNCTION__);
     // Wait for the micro-controller to be connected.
     bool status_connected = false;

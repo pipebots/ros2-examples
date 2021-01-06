@@ -39,8 +39,9 @@ StatusSubscriber::StatusSubscriber()
   last_callback_time_(now())
 {
   subscription_ = create_subscription<example_msgs::msg::Status>(
-    kStatusTopicName, 10, std::bind(&StatusSubscriber::StatusCallback, this,
-    std::placeholders::_1));
+    kStatusTopicName, 10, std::bind(
+      &StatusSubscriber::StatusCallback, this,
+      std::placeholders::_1));
 }
 
 bool StatusSubscriber::IsServerReady()
