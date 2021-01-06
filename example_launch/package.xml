@@ -15,5 +15,7 @@
 
   <exec_depend>combined_client</exec_depend>
   <exec_depend>combined_server</exec_depend>
+  <exec_depend>publisher_client</exec_depend>
+  <exec_depend>publisher_server</exec_depend>
 
 </package>
