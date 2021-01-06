@@ -7,13 +7,13 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package='publisher_server',
-            namespace='publisher_server_ns',
+            namespace='publisher_test_ns',
             executable='publisher_server_exec',
             name='p_s'
         ),
         Node(
             package='publisher_client',
-            namespace='publisher_client_ns',
+            namespace='publisher_test_ns',
             executable='publisher_client_exec',
             name='p_c'
         )

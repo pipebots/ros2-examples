@@ -69,6 +69,13 @@ void StatusNode::TimerCallback()
 #endif
   // Now publish the message.
   PublishStatus(connected, pump_running, litres_remaining);
+#if 1  // This is demo code.
+  // Exit out of the loop after 40 calls.
+  if (timer_call_count_ > 40) {
+    exit(0);
+  }
+#endif
+
 }
 
 #include "rclcpp_components/register_node_macro.hpp"
