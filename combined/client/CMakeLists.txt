@@ -25,17 +25,21 @@ find_package(rclcpp_action REQUIRED)
 find_package(leeds_pump_msgs REQUIRED)
 
 # The Leeds pump client.
-set(CLIENT_NAME combined_client)
+set(CLIENT_NAME combined_client_exec)
 
-add_executable(${CLIENT_NAME}
+set(SRC_FILES
   src/client_example.cpp
   src/status_subscriber_client.cpp
   src/gimbal_service_client.cpp
   src/pump_action_client.cpp
 )
 
+add_executable(${CLIENT_NAME}
+  ${SRC_FILES}
+)
+
 target_include_directories(${CLIENT_NAME} PRIVATE
-${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -48,6 +52,9 @@ ament_target_dependencies(${CLIENT_NAME}
   rclcpp_action
   leeds_pump_msgs
 )
+
+install(TARGETS ${CLIENT_NAME}
+  DESTINATION lib/${CLIENT_NAME})
 
 if(BUILD_TESTING)
   # Linting

@@ -19,7 +19,6 @@ find_package(ament_cmake REQUIRED)
 #    has asked CMake to find a package configuration file provided by
 #    "ament_cmake", but CMake did not find one.
 # you need to source the /opt/ros/foxy/setup.bash file!
-
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rclcpp_action REQUIRED)
@@ -27,6 +26,8 @@ find_package(leeds_pump_msgs REQUIRED)
 
 
 # The combined Leeds Pump.
+set(SERVER_NAME combined_server)
+
 set(SRC_FILES
   src/leeds_pump.cpp
   src/communications_fake.cpp
@@ -35,18 +36,21 @@ set(SRC_FILES
   src/status_node.cpp
 )
 
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+add_executable(${SERVER_NAME} ${SRC_FILES})
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -pedantic)
+  target_compile_options(${SERVER_NAME} PUBLIC -Wall -Wextra -pedantic)
 endif()
 
-ament_target_dependencies(${PROJECT_NAME}
+ament_target_dependencies(${SERVER_NAME}
   rclcpp
   rclcpp_components
   rclcpp_action
   leeds_pump_msgs
 )
+
+install(TARGETS ${SERVER_NAME}
+  DESTINATION lib/${SERVER_NAME})
 
 # Testing
 if(BUILD_TESTING)
