@@ -6,10 +6,10 @@ set -e
 # Link the code directories containing the packages to be built.
 cd ~/ws/src
 CODE_DIR=${HOME}/code
-ln -sf ${CODE_DIR}/combined
-ln -sf ${CODE_DIR}/leeds_pump_launch
-ln -sf ${CODE_DIR}/leeds_pump_msgs
-ln -sf ${CODE_DIR}/single
+ln -sf ${CODE_DIR}/example_combined
+ln -sf ${CODE_DIR}/example_launch
+ln -sf ${CODE_DIR}/example_msgs
+# ln -sf ${CODE_DIR}/example_singles
 
 # Build the packages.
 cd ~/ws
