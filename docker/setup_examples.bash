@@ -9,7 +9,7 @@ CODE_DIR=${HOME}/code
 ln -sf ${CODE_DIR}/example_combined
 ln -sf ${CODE_DIR}/example_launch
 ln -sf ${CODE_DIR}/example_msgs
-# ln -sf ${CODE_DIR}/example_singles
+ln -sf ${CODE_DIR}/example_singles
 
 # Build the packages.
 cd ~/ws

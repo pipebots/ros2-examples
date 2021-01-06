@@ -46,4 +46,10 @@ cd ~/ws
 ```
 
 After that, you should be able to run all the examples using the supplied
-launch files.
+launch files, e.g. to run the combined example,
+
+```bash
+cd ~/ws
+. ./install/setup.bash
+ros2 launch example_launch combined_example.launch.py
+```
