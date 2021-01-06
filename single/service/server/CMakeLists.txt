@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(leeds_pump_combined_server)
+project(leeds_pump_single_service_server)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -13,13 +13,6 @@ endif()
 
 # Find dependencies.
 find_package(ament_cmake REQUIRED)
-# If you get an error like this:
-#  CMake Error at CMakeLists.txt:15 (find_package):
-#    By not providing "Findament_cmake.cmake" in CMAKE_MODULE_PATH this project
-#    has asked CMake to find a package configuration file provided by
-#    "ament_cmake", but CMake did not find one.
-# you need to source the /opt/ros/foxy/setup.bash file!
-
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rclcpp_action REQUIRED)

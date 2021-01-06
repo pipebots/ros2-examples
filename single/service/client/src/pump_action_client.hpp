@@ -36,7 +36,7 @@ public:
 
   /**
    * @brief Waits for the server to be ready for a maximum of the given time.
-   * @param wait_time_ms Time in milliseconds.
+   * @param wait_time_ms Time in std::chrono::milliseconds.
    * @return int 1 = server ready, -1 = termination requested,
    * 0 server not ready/timeout.
    */

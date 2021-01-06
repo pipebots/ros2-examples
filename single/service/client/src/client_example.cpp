@@ -24,14 +24,17 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
+#include "leeds_pump_msgs/msg/leeds_pump_status.hpp"
+#include "leeds_pump_msgs/srv/leeds_pump_gimbal.hpp"
 #include "leeds_pump_msgs/action/leeds_pump_pump.hpp"
 
+#include "status_subscriber_client.hpp"
+#include "gimbal_service_client.hpp"
 #include "pump_action_client.hpp"
 
-// Variable for testing.
-static bool pump_example_done = false;
-
 // Static vars for sharing objects with RunTests().
+static std::shared_ptr<StatusSubscriber> status_client;
+static std::shared_ptr<GimbalServiceClient> gimbal_client;
 static std::shared_ptr<PumpActionClient> pump_client;
 
 /**
@@ -42,18 +45,82 @@ bool WaitForServer()
 {
   RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "%s Waiting for server...", __FUNCTION__);
   bool terminated = true;
+  // Wait for gimbal service.
   const std::chrono::milliseconds kWaitDelayMs(250);
-  // Wait for pump action.
-  int pump_ready = 0;
+  int gimbal_ready = 0;
   do {
-    pump_ready = pump_client->IsServerReady(kWaitDelayMs);
-  } while (!pump_ready && rclcpp::ok());
+    gimbal_ready = gimbal_client->IsServerReady(kWaitDelayMs);
+  } while (!gimbal_ready && rclcpp::ok());
   if (rclcpp::ok()) {
-    RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "%s pump server ready", __FUNCTION__);
-    terminated = false;
+    RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "%s gimbal server ready", __FUNCTION__);
+    // Wait for pump action.
+    int pump_ready = 0;
+    do {
+      pump_ready = gimbal_client->IsServerReady(kWaitDelayMs);
+    } while (!pump_ready && rclcpp::ok());
+    if (rclcpp::ok()) {
+      RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "%s pump server ready", __FUNCTION__);
+      // Wait for the status node to be connected.
+      bool status_ready = false;
+      do {
+        status_ready = status_client->IsServerReady();
+        std::this_thread::sleep_for(kWaitDelayMs);
+      } while (!status_ready && rclcpp::ok());
+      if (rclcpp::ok()) {
+        RCLCPP_INFO(rclcpp::get_logger(
+            "leeds_pump_client"), "%s status publisher ready", __FUNCTION__);
+        // Wait for the micro-controller to be connected.
+        bool status_connected = false;
+        do {
+          status_connected = status_client->connected();
+          std::this_thread::sleep_for(kWaitDelayMs);
+        } while (!status_connected && rclcpp::ok());
+        RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "%s connected", __FUNCTION__);
+        if (rclcpp::ok()) {
+          terminated = false;
+        }
+      }
+    }
   }
   return terminated;
 }
+
+bool RunGimbalExample()
+{
+  bool terminated = false;
+  // Set pitch to -10, yaw to +20
+  int pitch = -10;
+  int yaw = +20;
+  RCLCPP_INFO(rclcpp::get_logger(
+      "leeds_pump_client"), "Gimbal being moved to pitch %d, yaw %d.", pitch, yaw);
+  int result = gimbal_client->Move(&pitch, &yaw);
+  RCLCPP_INFO(rclcpp::get_logger(
+      "leeds_pump_client"), "Gimbal moved to pitch %d, yaw %d.", pitch, yaw);
+  if (result && rclcpp::ok()) {
+    // Move gimbal again.
+    pitch = +80;
+    yaw = -70;
+    RCLCPP_INFO(rclcpp::get_logger(
+        "leeds_pump_client"), "Gimbal being moved to pitch %d, yaw %d.", pitch, yaw);
+    result = gimbal_client->Move(&pitch, &yaw);
+    RCLCPP_INFO(rclcpp::get_logger(
+        "leeds_pump_client"), "Gimbal moved to pitch %d, yaw %d.", pitch, yaw);
+    if (rclcpp::ok()) {
+      if (result && rclcpp::ok()) {
+        RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "Finished gimbal example.");
+      } else {
+        RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "Gimbal example failed.");
+      }
+    } else {
+      RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "Gimbal terminated.");
+      terminated = true;
+    }
+  }
+  return terminated;
+}
+
+// Bodge variable for testing.
+static bool pump_example_done = false;
 
 void PumpExampleCallback(bool done, float litres_pumped)
 {
@@ -70,6 +137,7 @@ bool RunPumpExample()
   RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "%s called", __FUNCTION__);
   // Send 1.0 litres
   RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "%s send 1.0l", __FUNCTION__);
+  float start_level_l = status_client->litres_remaining();
   pump_client->SendGoal(1.0, &PumpExampleCallback);
   // Wait until the pump has finished pumping.
   while (!pump_example_done) {
@@ -103,6 +171,9 @@ bool RunPumpExample()
       if (!terminated) {
         // The status can take 500ms to arrive so wait.
         std::this_thread::sleep_for(kStatusDelay);
+        float end_level_l = status_client->litres_remaining();
+        RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "Used %fl",
+          start_level_l - end_level_l);
       }
     }
   }
@@ -117,9 +188,12 @@ void RunExamples()
   RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "Examples started.");
   bool terminated = WaitForServer();
   if (!terminated) {
-    terminated = RunPumpExample();
+    terminated = RunGimbalExample();
     if (!terminated) {
-      RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "Examples complete.");
+      terminated = RunPumpExample();
+      if (!terminated) {
+        RCLCPP_INFO(rclcpp::get_logger("leeds_pump_client"), "Examples complete.");
+      }
     }
   }
   if (terminated) {
@@ -131,9 +205,13 @@ void RunExamples()
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
+  status_client = std::make_shared<StatusSubscriber>();
+  gimbal_client = std::make_shared<GimbalServiceClient>();
   pump_client = std::make_shared<PumpActionClient>();
-  // Add node to executor.
+  // Add nodes to executor.
+  // NOTE: The gimbal service is NOT an rclcpp::Node so does not need an executor.
   rclcpp::executors::SingleThreadedExecutor exec;
+  exec.add_node(status_client);
   exec.add_node(pump_client);
   // Start thread to exercise the service and action clients.
   auto test_thread = new std::thread(&RunExamples);
@@ -144,6 +222,8 @@ int main(int argc, char * argv[])
   delete test_thread;
   // Make sure clients are closed before shutdown.
   // Can cause seg fault on exit if not done.
+  status_client = nullptr;
+  gimbal_client = nullptr;
   pump_client = nullptr;
   rclcpp::shutdown();
   return 0;
