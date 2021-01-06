@@ -26,7 +26,7 @@ find_package(leeds_pump_msgs REQUIRED)
 
 
 # The combined Leeds Pump.
-set(SERVER_NAME combined_server)
+set(SERVER_NAME combined_server_exec)
 
 set(SRC_FILES
   src/leeds_pump.cpp
@@ -50,7 +50,8 @@ ament_target_dependencies(${SERVER_NAME}
 )
 
 install(TARGETS ${SERVER_NAME}
-  DESTINATION lib/${SERVER_NAME})
+  # PROJECT_NAME __MUST__ be used here for launch files to work.
+  DESTINATION lib/${PROJECT_NAME})
 
 # Testing
 if(BUILD_TESTING)

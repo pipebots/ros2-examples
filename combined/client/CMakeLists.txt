@@ -54,7 +54,8 @@ ament_target_dependencies(${CLIENT_NAME}
 )
 
 install(TARGETS ${CLIENT_NAME}
-  DESTINATION lib/${CLIENT_NAME})
+  # PROJECT_NAME __MUST__ be used here for launch files to work.
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   # Linting

@@ -32,7 +32,7 @@ const std::chrono::milliseconds kCommunicationsDelay(10);
 
 
 GimbalNode::GimbalNode(rclcpp::NodeOptions options)
-: Node("gimbal_server", options), comms_(nullptr)
+: Node("gimbal_node", options), comms_(nullptr)
 {
   server_ =
     create_service<leeds_pump_msgs::srv::LeedsPumpGimbal>(kGimbalServiceName,
