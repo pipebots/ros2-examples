@@ -58,15 +58,21 @@ rclcpp_action::GoalResponse PumpNode::Goal(
 {
   RCLCPP_INFO(get_logger(), "Received goal request: %f litres", goal->litres_to_pump);
   (void)uuid;
+#if 1
+  // Just so the demo works, always accept.
+  return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+#else
   // Reject if not enough volume remaining or not connected.
   bool connected = false;
   float litres_remaining = 0.0;
+  // TODO(AJB) Call function here to fill in the connected and litres_remaining values.
   RCLCPP_INFO(get_logger(), "AJB: GetStatus: connected %d litres %f", connected, litres_remaining);
   // Add a bit on to make sure that float rounding errors don't affect functionality.
   if (!connected || (litres_remaining + 0.1) < goal->litres_to_pump) {
     return rclcpp_action::GoalResponse::REJECT;
   }
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+#endif
 }
 
 rclcpp_action::CancelResponse PumpNode::Cancel(
@@ -94,17 +100,41 @@ void PumpNode::Execute(
   rclcpp::Rate loop_rate(UPDATE_RATE_PER_S);
   auto feedback = std::make_shared<example_msgs::action::Pump::Feedback>();
   auto result = std::make_shared<example_msgs::action::Pump::Result>();
+#if 1
+  // Example code.
+  float litres_pumped = 0.0;
+  // Run feedback loop 5 times.
+  for (int loop_counter = 0; rclcpp::ok() && loop_counter < 5; ++loop_counter) {
+    // Cancelled?
+    if (goal_handle->is_canceling()) {
+      break;
+    }
+    // Send feedback.
+    litres_pumped += 0.2;
+    feedback->litres_pumped = litres_pumped;
+    goal_handle->publish_feedback(feedback);
+
+    // Sleep until next update.  Exits if rclcpp:ok() == false.
+    loop_rate.sleep();
+  }
+
+  // Report final status.
+  result->litres_pumped = litres_pumped;
+  if (goal_handle->is_canceling()) {
+    goal_handle->canceled(result);
+    RCLCPP_INFO(get_logger(), "Goal cancelled.");
+  } else {
+    goal_handle->succeed(result);
+    RCLCPP_INFO(get_logger(), "Goal succeeded.");
+  }
+#else
+  // Start pump.
   float litres_at_start = 0.0;
   float litres_to_pump = goal_handle->get_goal()->litres_to_pump;
   float litres_remaining = 0.0;
   float litres_pumped = 0.0;
   bool connected = false;
   bool running = false;
-
-  // Start pump.
-#if 1
-  RCLCPP_INFO(get_logger(), "TODO something useful!");
-#else
   if (connected) {
     if (connected) {
       // Wait for pump to start.
