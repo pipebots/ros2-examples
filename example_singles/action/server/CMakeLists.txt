@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(single_action_server)
+project(action_server)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -19,9 +19,11 @@ find_package(rclcpp_components REQUIRED)
 find_package(example_msgs REQUIRED)
 
 
-# The combined Leeds Pump.
+# The action server.
+set(SERVER_NAME ${PROJECT_NAME}_exec)
+
 set(SRC_FILES
-  src/leeds_pump.cpp
+  src/action_server.cpp
   src/pump_node.cpp
 )
 

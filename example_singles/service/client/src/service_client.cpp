@@ -120,7 +120,7 @@ int main(int argc, char * argv[])
   exec = new rclcpp::executors::SingleThreadedExecutor();
   // Start thread to exercise the service and action clients.
   auto test_thread = new std::thread(&RunExamples);
-  // Blocks until Ctrl+c.
+  // Blocks until Ctrl+C.
   exec->spin();
   // Tidy up.
   test_thread->join();

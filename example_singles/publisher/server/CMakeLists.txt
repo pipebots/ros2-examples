@@ -14,25 +14,25 @@ endif()
 # Find dependencies.
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(example_msgs REQUIRED)
 
 # The example status.
-set(SERVER_NAME publisher_server_exec)
+set(SERVER_NAME ${PROJECT_NAME}_exec)
+
 set(SRC_FILES
   src/publisher_server.cpp
   src/status_node.cpp
 )
 
 add_executable(${SERVER_NAME} ${SRC_FILES})
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_compile_options(${SERVER_NAME} PUBLIC -Wall -Wextra -pedantic)
 endif()
 
 ament_target_dependencies(${SERVER_NAME}
   rclcpp
-  rclcpp_action
   rclcpp_components
   example_msgs
 )

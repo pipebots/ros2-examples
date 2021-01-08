@@ -206,7 +206,7 @@ void RunExamples()
   if (terminated) {
     RCLCPP_INFO(rclcpp::get_logger("client"), "Examples terminated early.");
   }
-  RCLCPP_INFO(rclcpp::get_logger("client"), "Press Ctrl+c to exit.");
+  RCLCPP_INFO(rclcpp::get_logger("client"), "Press Ctrl+C to exit.");
 }
 
 int main(int argc, char * argv[])

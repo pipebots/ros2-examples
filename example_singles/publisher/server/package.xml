@@ -16,7 +16,6 @@
 
   <!-- ROS dependencies. -->
   <depend>rclcpp</depend>
-  <depend>rclcpp_action</depend>
   <depend>rclcpp_components</depend>
   <depend>example_msgs</depend>
 

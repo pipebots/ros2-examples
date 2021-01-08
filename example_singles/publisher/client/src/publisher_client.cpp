@@ -78,7 +78,7 @@ void RunExamples()
     // Listen to the status client for 30 loops then quit.
     // This should show logging output from the server and client.
     RCLCPP_INFO(rclcpp::get_logger("client"), "Waiting for 30 loops.");
-    RCLCPP_INFO(rclcpp::get_logger("client"), "Press Ctrl+c to exit early.");
+    RCLCPP_INFO(rclcpp::get_logger("client"), "Press Ctrl+C to exit early.");
     int loop_count = 0;
     bool status_ready = false;
     const std::chrono::milliseconds kWaitDelayMs(500);

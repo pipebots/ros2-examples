@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(single_action_client)
+project(action_client)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -19,15 +19,17 @@ find_package(rclcpp_components REQUIRED)
 find_package(example_msgs REQUIRED)
 
 # The Leeds pump client.
-set(CLIENT_NAME combined_client)
+set(CLIENT_NAME ${PROJECT_NAME}_exec)
 
-add_executable(${CLIENT_NAME}
-  src/client_example.cpp
+set(SRC_FILES
+  src/action_client.cpp
   src/pump_action_client.cpp
 )
 
+add_executable(${CLIENT_NAME} ${SRC_FILES})
+
 target_include_directories(${CLIENT_NAME} PRIVATE
-${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -41,6 +43,11 @@ ament_target_dependencies(${CLIENT_NAME}
   example_msgs
 )
 
+install(TARGETS ${CLIENT_NAME}
+  # PROJECT_NAME __MUST__ be used here for launch files to work.
+  DESTINATION lib/${PROJECT_NAME})
+
+# Testing
 if(BUILD_TESTING)
   # Linting
   find_package(ament_lint_auto REQUIRED)
