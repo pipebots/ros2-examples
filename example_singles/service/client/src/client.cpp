@@ -23,12 +23,12 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "example_msgs/msg/status.hpp"
+#include "example_msgs/srv/gimbal.hpp"
 
-#include "status_subscriber_client.hpp"
+#include "gimbal_service_client.hpp"
 
 // Static vars for sharing objects with RunTests().
-static std::shared_ptr<StatusSubscriber> status_client;
+static std::shared_ptr<GimbalServiceClient> gimbal_client;
 
 // Pointer to executor so that the spin loop can be kill by the thread.
 static rclcpp::executors::SingleThreadedExecutor * exec;
@@ -39,29 +39,53 @@ static rclcpp::executors::SingleThreadedExecutor * exec;
  */
 bool WaitForServer()
 {
-  RCLCPP_INFO(rclcpp::get_logger("client"), "%s: Waiting for server...", __FUNCTION__);
+  RCLCPP_INFO(rclcpp::get_logger("client"), "%s Waiting for server...", __FUNCTION__);
   bool terminated = true;
   // Wait for gimbal service.
   const std::chrono::milliseconds kWaitDelayMs(250);
-  // Wait for the status node to be connected.
-  bool status_ready = false;
+  int gimbal_ready = 0;
   do {
-    status_ready = status_client->IsServerReady();
-    std::this_thread::sleep_for(kWaitDelayMs);
-  } while (!status_ready && rclcpp::ok());
+    gimbal_ready = gimbal_client->IsServerReady(kWaitDelayMs);
+  } while (!gimbal_ready && rclcpp::ok());
   if (rclcpp::ok()) {
+    RCLCPP_INFO(rclcpp::get_logger("client"), "%s gimbal server ready", __FUNCTION__);
+  }
+  return terminated;
+}
+
+bool RunGimbalExample()
+{
+  bool terminated = false;
+  // Set pitch to -10, yaw to +20
+  int pitch = -10;
+  int yaw = +20;
+  RCLCPP_INFO(
+    rclcpp::get_logger(
+      "client"), "Gimbal being moved to pitch %d, yaw %d.", pitch, yaw);
+  int result = gimbal_client->Move(&pitch, &yaw);
+  RCLCPP_INFO(
+    rclcpp::get_logger(
+      "client"), "Gimbal moved to pitch %d, yaw %d.", pitch, yaw);
+  if (result && rclcpp::ok()) {
+    // Move gimbal again.
+    pitch = +80;
+    yaw = -70;
     RCLCPP_INFO(
       rclcpp::get_logger(
-        "client"), "%s: status publisher ready", __FUNCTION__);
-    // Wait for the micro-controller to be connected.
-    bool status_connected = false;
-    do {
-      status_connected = status_client->connected();
-      std::this_thread::sleep_for(kWaitDelayMs);
-    } while (!status_connected && rclcpp::ok());
-    RCLCPP_INFO(rclcpp::get_logger("client"), "%s: connected", __FUNCTION__);
+        "client"), "Gimbal being moved to pitch %d, yaw %d.", pitch, yaw);
+    result = gimbal_client->Move(&pitch, &yaw);
+    RCLCPP_INFO(
+      rclcpp::get_logger(
+        "client"), "Gimbal moved to pitch %d, yaw %d.", pitch, yaw);
     if (rclcpp::ok()) {
-      terminated = false;
+      if (result && rclcpp::ok()) {
+        RCLCPP_INFO(rclcpp::get_logger("client"), "Finished gimbal example.");
+      } else {
+        RCLCPP_INFO(rclcpp::get_logger("client"), "Gimbal example failed.");
+      }
+    } else {
+      RCLCPP_INFO(rclcpp::get_logger("client"), "Gimbal terminated.");
+      terminated = true;
     }
   }
   return terminated;
@@ -71,48 +95,39 @@ void RunExamples()
 {
   RCLCPP_INFO(rclcpp::get_logger("client"), "Examples started.");
   bool terminated = WaitForServer();
+  if (!terminated) {
+    terminated = RunGimbalExample();
+    if (!terminated) {
+      RCLCPP_INFO(rclcpp::get_logger("client"), "Examples complete.");
+      // Stop the spin loop to automatically quit.
+      exec->cancel();
+    }
+  }
   if (terminated) {
     RCLCPP_INFO(rclcpp::get_logger("client"), "Examples terminated early.");
-  } else {
-    // Listen to the status client for 30 loops then quit.
-    // This should show logging output from the server and client.
-    RCLCPP_INFO(rclcpp::get_logger("client"), "Waiting for 30 loops.");
-    RCLCPP_INFO(rclcpp::get_logger("client"), "Press Ctrl+c to exit early.");
-    int loop_count = 0;
-    bool status_ready = false;
-    const std::chrono::milliseconds kWaitDelayMs(500);
-    do {
-      status_ready = status_client->IsServerReady();
-      std::this_thread::sleep_for(kWaitDelayMs);
-      ++loop_count;
-      RCLCPP_INFO(rclcpp::get_logger("client"),
-        "%s: status_ready %d, loop_count %d",
-        __func__, status_ready, loop_count);
-    } while (status_ready && rclcpp::ok() && loop_count < 30);
-    // Stop the spin loop to automatically quit.
-    exec->cancel();
-    RCLCPP_INFO(rclcpp::get_logger("client"), "Completed example :-)");
   }
+  RCLCPP_INFO(rclcpp::get_logger("client"), "Press Ctrl+c to exit.");
 }
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  status_client = std::make_shared<StatusSubscriber>();
+  gimbal_client = std::make_shared<GimbalServiceClient>();
   // Add nodes to executor.
+  // NOTE: The gimbal service is NOT an rclcpp::Node so does not need an
+  // executor.  However, an executor is still needed to cause this thread
+  // to wait until the test code completes.
   exec = new rclcpp::executors::SingleThreadedExecutor();
-  exec->add_node(status_client);
   // Start thread to exercise the service and action clients.
   auto test_thread = new std::thread(&RunExamples);
-  // Start the nodes (blocks until Ctrl-c).
+  // Blocks until Ctrl+c.
   exec->spin();
   // Tidy up.
-  delete exec;
   test_thread->join();
   delete test_thread;
-  // Make sure clients are destroyed before shutdown.
-  // Will cause seg fault on exit if not done.
-  status_client = nullptr;
+  // Make sure clients are closed before shutdown.
+  // Can cause seg fault on exit if not done.
+  gimbal_client = nullptr;
   rclcpp::shutdown();
   return 0;
 }

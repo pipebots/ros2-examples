@@ -26,7 +26,7 @@ find_package(example_msgs REQUIRED)
 
 
 # The combined Leeds Pump.
-set(SERVER_NAME combined_server_exec)
+set(SERVER_NAME ${PROJECT_NAME}_exec)
 
 set(SRC_FILES
   src/server.cpp

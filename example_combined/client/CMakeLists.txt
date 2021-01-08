@@ -25,7 +25,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(example_msgs REQUIRED)
 
 # The Leeds pump client.
-set(CLIENT_NAME combined_client_exec)
+set(CLIENT_NAME ${PROJECT_NAME}_exec)
 
 set(SRC_FILES
   src/client_example.cpp

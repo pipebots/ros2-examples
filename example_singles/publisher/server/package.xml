@@ -3,7 +3,7 @@
 <package format="3">
   <name>publisher_server</name>
   <version>0.0.0</version>
-  <description>The Leeds Pump example single publisher</description>
+  <description>ROS2 single publisher example</description>
   <maintainer email="a.j.blight@leeds.ac.uk">Andy Blight</maintainer>
   <license>MIT</license>
 

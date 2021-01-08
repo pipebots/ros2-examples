@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(single_service_client)
+project(service_client)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -18,19 +18,15 @@ find_package(rclcpp_components REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(example_msgs REQUIRED)
 
-# The Leeds pump client.
-set(CLIENT_NAME combined_client)
+# The client.
+set(CLIENT_NAME ${PROJECT_NAME}_exec)
 
-add_executable(${CLIENT_NAME}
-  src/client_example.cpp
-  src/status_subscriber_client.cpp
+set(SRC_FILES
+  src/client.cpp
   src/gimbal_service_client.cpp
-  src/pump_action_client.cpp
 )
 
-target_include_directories(${CLIENT_NAME} PRIVATE
-${CMAKE_SOURCE_DIR}
-)
+add_executable(${CLIENT_NAME} ${SRC_FILES})
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_compile_options(${CLIENT_NAME} PUBLIC -Wall -Wextra -pedantic)
@@ -39,9 +35,12 @@ endif()
 ament_target_dependencies(${CLIENT_NAME}
   rclcpp
   rclcpp_components
-  rclcpp_action
   example_msgs
 )
+
+install(TARGETS ${CLIENT_NAME}
+  # PROJECT_NAME __MUST__ be used here for launch files to work.
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   # Linting

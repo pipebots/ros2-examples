@@ -21,7 +21,6 @@
 #include <memory>
 #include "rclcpp/rclcpp.hpp"
 #include "example_msgs/srv/gimbal.hpp"
-#include "communications.hpp"
 
 // Topic/servic/action names.
 static const char * kGimbalServiceName = "pump/gimbal";
@@ -32,7 +31,7 @@ const std::chrono::milliseconds kCommunicationsDelay(10);
 
 
 GimbalNode::GimbalNode(rclcpp::NodeOptions options)
-: Node("gimbal_server", options), comms_(nullptr)
+: Node("gimbal_server", options)
 {
   server_ =
     create_service<example_msgs::srv::Gimbal>(
@@ -40,11 +39,6 @@ GimbalNode::GimbalNode(rclcpp::NodeOptions options)
     std::bind(
       &GimbalNode::HandleService, this,
       std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-}
-
-void GimbalNode::AddComms(Communications * comms)
-{
-  comms_ = comms;
 }
 
 void GimbalNode::HandleService(
@@ -55,7 +49,18 @@ void GimbalNode::HandleService(
   RCLCPP_DEBUG(
     get_logger(), "%s: setting pitch %d, yaw %d",
     __FUNCTION__, request->pitch, request->yaw);
-  // Send command.
+#if 1
+  // Demo code.
+
+  // Wait for a time to simulate delay in response.
+  rclcpp::sleep_for(kCommunicationsDelay);
+  // Set fixed values
+  response->pitch = 90;
+  response->yaw = 89;
+#else
+  // This is an example of what you might add.
+
+  // Send command with pitch and yaw values.
   bool result = comms_->SetGimbal(request->pitch, request->yaw);
   if (result) {
     // Wait for the reply.
@@ -73,6 +78,7 @@ void GimbalNode::HandleService(
     // Set error value.
     response->pitch = response->yaw = -1000;
   }
+#endif
 }
 
 #include "rclcpp_components/register_node_macro.hpp"

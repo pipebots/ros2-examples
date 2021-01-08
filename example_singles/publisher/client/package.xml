@@ -3,7 +3,7 @@
 <package format="3">
   <name>publisher_client</name>
   <version>0.0.0</version>
-  <description>The Leeds Pump example single publisher</description>
+  <description>ROS2 publisher client example</description>
   <maintainer email="a.j.blight@leeds.ac.uk">Andy Blight</maintainer>
   <license>MIT</license>
 
@@ -16,7 +16,6 @@
 
   <!-- ROS dependencies. -->
   <depend>rclcpp</depend>
-  <depend>rclcpp_action</depend>
   <depend>rclcpp_components</depend>
   <depend>example_msgs</depend>
 

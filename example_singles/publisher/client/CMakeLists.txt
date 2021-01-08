@@ -14,25 +14,25 @@ endif()
 # Find dependencies.
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(example_msgs REQUIRED)
 
-# The Leeds pump.
-set(CLIENT_NAME publisher_client_exec)
+# The publisher client.
+set(CLIENT_NAME ${PROJECT_NAME}_exec)
+
 set(SRC_FILES
   src/client.cpp
   src/status_subscriber_client.cpp
 )
 
 add_executable(${CLIENT_NAME} ${SRC_FILES})
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_compile_options(${CLIENT_NAME} PUBLIC -Wall -Wextra -pedantic)
 endif()
 
 ament_target_dependencies(${CLIENT_NAME}
   rclcpp
-  rclcpp_action
   rclcpp_components
   example_msgs
 )
@@ -41,6 +41,7 @@ install(TARGETS ${CLIENT_NAME}
   # PROJECT_NAME __MUST__ be used here for launch files to work.
   DESTINATION lib/${PROJECT_NAME})
 
+# Testing
 if(BUILD_TESTING)
   # Linting
   find_package(ament_lint_auto REQUIRED)

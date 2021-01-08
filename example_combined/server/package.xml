@@ -3,7 +3,7 @@
 <package format="3">
   <name>combined_server</name>
   <version>0.0.0</version>
-  <description>Leeds Pump combined server example</description>
+  <description>ROS2 combined server example</description>
   <maintainer email="a.j.blight@leeds.ac.uk">Andy Blight</maintainer>
   <license>MIT</license>
 

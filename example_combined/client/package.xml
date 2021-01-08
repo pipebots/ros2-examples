@@ -3,7 +3,7 @@
 <package format="3">
   <name>combined_client</name>
   <version>0.0.0</version>
-  <description>The combined client example</description>
+  <description>ROS2 combined client example</description>
   <maintainer email="a.j.blight@leeds.ac.uk">Andy Blight</maintainer>
   <license>MIT</license>
 

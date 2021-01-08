@@ -20,10 +20,6 @@
 #include <memory>
 #include "rclcpp/rclcpp.hpp"
 #include "gimbal_node.hpp"
-#include "status_node.hpp"
-#include "pump_node.hpp"
-#include "communications.hpp"
-#include "communications_fake.hpp"
 
 int main(int argc, char * argv[])
 {
@@ -31,25 +27,10 @@ int main(int argc, char * argv[])
   // Create the nodes.
   rclcpp::NodeOptions options;
   auto gimbal_node = std::make_shared<GimbalNode>(options);
-  auto pump_node = std::make_shared<PumpNode>(options);
-  auto status_node = std::make_shared<StatusNode>(options);
-  // The virtual class is used so that fake, mocked or real implementations
-  // can be used (dependency injection).
-  Communications * comms = new CommunicationsFake();
-  // Instantiate communications and open port.
-  // If this fails, an exception will be thrown.
-  comms->Init();
-  // Add comms to nodes.
-  gimbal_node->AddComms(comms);
-  pump_node->AddComms(comms);
-  status_node->AddComms(comms);
   // Add nodes to executor.
   rclcpp::executors::SingleThreadedExecutor exec;
   exec.add_node(gimbal_node);
-  exec.add_node(pump_node);
-  exec.add_node(status_node);
   exec.spin();
   rclcpp::shutdown();
-  delete comms;
   return 0;
 }
