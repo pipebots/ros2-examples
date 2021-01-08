@@ -4,6 +4,7 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 
 def generate_launch_description():
+    # Note: the namespace must match if the two nodes are going to talk to each other!
     return LaunchDescription([
         Node(
             package='publisher_server',
