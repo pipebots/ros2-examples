@@ -18,7 +18,6 @@ find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(example_msgs REQUIRED)
 
-
 # The action server.
 set(SERVER_NAME ${PROJECT_NAME}_exec)
 
@@ -27,18 +26,22 @@ set(SRC_FILES
   src/pump_node.cpp
 )
 
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+add_executable(${SERVER_NAME} ${SRC_FILES})
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -pedantic)
+  target_compile_options(${SERVER_NAME} PUBLIC -Wall -Wextra -pedantic)
 endif()
 
-ament_target_dependencies(${PROJECT_NAME}
+ament_target_dependencies(${SERVER_NAME}
   rclcpp
   rclcpp_action
   rclcpp_components
   example_msgs
 )
+
+install(TARGETS ${SERVER_NAME}
+  # PROJECT_NAME __MUST__ be used here for launch files to work.
+  DESTINATION lib/${PROJECT_NAME})
 
 # Testing
 if(BUILD_TESTING)
