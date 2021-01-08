@@ -27,11 +27,22 @@ int main(int argc, char * argv[])
   // Create the nodes.
   rclcpp::NodeOptions options;
   auto gimbal_node = std::make_shared<GimbalNode>(options);
+  RCLCPP_INFO(rclcpp::get_logger("server"), "Spinning.");
+#if 1
+  // This code spins the node regularly for 10 loops and then exits.
+  // Just so the demos run without user interaction.
+  for (int loop_counter = 0; rclcpp::ok() && loop_counter < 10; ++loop_counter)
+  {
+      std::this_thread::sleep_for(std::chrono::milliseconds(250));
+      rclcpp::spin_some(gimbal_node);
+  }
+#else
+  // This is what normally happens.
   // Add nodes to executor.
   rclcpp::executors::SingleThreadedExecutor exec;
   exec.add_node(gimbal_node);
-  RCLCPP_INFO(rclcpp::get_logger("server"), "Spinning.");
   exec.spin();
+#endif
   RCLCPP_INFO(rclcpp::get_logger("server"), "Stopped.");
   rclcpp::shutdown();
   return 0;

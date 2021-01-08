@@ -46,10 +46,10 @@ bool WaitForServer()
   int gimbal_ready = 0;
   do {
     gimbal_ready = gimbal_client->IsServerReady(kWaitDelayMs);
-    RCLCPP_INFO(rclcpp::get_logger("client"), "%s gimbal server ready", __func__);
   } while (gimbal_ready == 0 && rclcpp::ok());
   if (rclcpp::ok()) {
     RCLCPP_INFO(rclcpp::get_logger("client"), "%s gimbal server ready", __func__);
+    terminated = false;
   }
   return terminated;
 }
