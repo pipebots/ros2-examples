@@ -44,7 +44,7 @@ GimbalServiceClient::~GimbalServiceClient()
 
 int GimbalServiceClient::IsServerReady(const std::chrono::milliseconds & wait_time_ms)
 {
-  RCLCPP_DEBUG(node_->get_logger(), "%s: called", __FUNCTION__);
+  RCLCPP_DEBUG(node_->get_logger(), "%s: called", __func__);
   int result = -1;
   if (rclcpp::ok()) {
     bool server_ready = client_->wait_for_service(wait_time_ms);
@@ -55,25 +55,25 @@ int GimbalServiceClient::IsServerReady(const std::chrono::milliseconds & wait_ti
 
 int GimbalServiceClient::Move(int * pitch, int * yaw)
 {
-  RCLCPP_DEBUG(node_->get_logger(), "%s: setting pitch %d, yaw %d", __FUNCTION__, *pitch, *yaw);
+  RCLCPP_DEBUG(node_->get_logger(), "%s: setting pitch %d, yaw %d", __func__, *pitch, *yaw);
   int success = 0;
   // Send request.
   auto request = std::make_shared<example_msgs::srv::Gimbal::Request>();
   request->pitch = *pitch;
   request->yaw = *yaw;
   auto result_future = client_->async_send_request(request);
-  RCLCPP_DEBUG(node_->get_logger(), "%s: sent request", __FUNCTION__);
+  RCLCPP_DEBUG(node_->get_logger(), "%s: sent request", __func__);
   if (rclcpp::spin_until_future_complete(node_, result_future) ==
     rclcpp::executor::FutureReturnCode::SUCCESS)
   {
     auto result = result_future.get();
-    RCLCPP_DEBUG(node_->get_logger(), "%s: response %d, yaw %d", __FUNCTION__, *pitch, *yaw);
+    RCLCPP_DEBUG(node_->get_logger(), "%s: response %d, yaw %d", __func__, *pitch, *yaw);
     // Set return values.
     *pitch = result->pitch;
     *yaw = result->yaw;
     success = 1;
   } else {
-    RCLCPP_WARN(node_->get_logger(), "%s: Failed to call service", __FUNCTION__);
+    RCLCPP_WARN(node_->get_logger(), "%s: Failed to call service", __func__);
   }
   return success;
 }

@@ -40,7 +40,7 @@ static rclcpp::executors::SingleThreadedExecutor * exec;
  */
 bool WaitForServer()
 {
-  RCLCPP_INFO(rclcpp::get_logger("client"), "%s: Waiting for server...", __FUNCTION__);
+  RCLCPP_INFO(rclcpp::get_logger("client"), "%s: Waiting for server...", __func__);
   bool terminated = true;
   // Wait for gimbal service.
   const std::chrono::milliseconds kWaitDelayMs(250);
@@ -53,14 +53,14 @@ bool WaitForServer()
   if (rclcpp::ok()) {
     RCLCPP_INFO(
       rclcpp::get_logger(
-        "client"), "%s: status publisher ready", __FUNCTION__);
+        "client"), "%s: status publisher ready", __func__);
     // Wait for the micro-controller to be connected.
     bool status_connected = false;
     do {
       status_connected = status_client->connected();
       std::this_thread::sleep_for(kWaitDelayMs);
     } while (!status_connected && rclcpp::ok());
-    RCLCPP_INFO(rclcpp::get_logger("client"), "%s: connected", __FUNCTION__);
+    RCLCPP_INFO(rclcpp::get_logger("client"), "%s: connected", __func__);
     if (rclcpp::ok()) {
       terminated = false;
     }

@@ -44,12 +44,12 @@ CommunicationsFake::~CommunicationsFake()
 
 void CommunicationsFake::Init()
 {
-  RCUTILS_LOG_DEBUG_NAMED("Comms", "Called: %s", __FUNCTION__);
+  RCUTILS_LOG_DEBUG_NAMED("Comms", "Called: %s", __func__);
 }
 
 bool CommunicationsFake::GetGimbal(int * pitch, int * yaw) const
 {
-  RCUTILS_LOG_DEBUG_NAMED("Comms", "Called: %s", __FUNCTION__);
+  RCUTILS_LOG_DEBUG_NAMED("Comms", "Called: %s", __func__);
   *pitch = 0.0;
   *yaw = 0.0;
   bool result = false;
@@ -58,14 +58,14 @@ bool CommunicationsFake::GetGimbal(int * pitch, int * yaw) const
 
 bool CommunicationsFake::SetGimbal(const int pitch, const int yaw)
 {
-  RCUTILS_LOG_DEBUG_NAMED("Comms", "Called: %s, pitch %d, yaw %d.", __FUNCTION__, pitch, yaw);
+  RCUTILS_LOG_DEBUG_NAMED("Comms", "Called: %s, pitch %d, yaw %d.", __func__, pitch, yaw);
   bool result = false;
   return result;
 }
 
 bool CommunicationsFake::SetPump(const bool running)
 {
-  RCUTILS_LOG_DEBUG_NAMED("Comms", "Called: %s, running %d", __FUNCTION__, running);
+  RCUTILS_LOG_DEBUG_NAMED("Comms", "Called: %s, running %d", __func__, running);
   bool result = false;
   return result;
 }
@@ -74,7 +74,7 @@ void CommunicationsFake::GetStatus(
   bool * connected, bool * pump_running,
   float * litres_remaining) const
 {
-  RCUTILS_LOG_DEBUG_NAMED("Comms", "Called: %s", __FUNCTION__);
+  RCUTILS_LOG_DEBUG_NAMED("Comms", "Called: %s", __func__);
   *connected = true;
   *pump_running = false;
   *litres_remaining = 1.0;

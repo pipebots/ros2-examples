@@ -43,7 +43,7 @@ static std::shared_ptr<PumpActionClient> pump_client;
  */
 bool WaitForServer()
 {
-  RCLCPP_INFO(rclcpp::get_logger("client"), "%s Waiting for server...", __FUNCTION__);
+  RCLCPP_INFO(rclcpp::get_logger("client"), "%s Waiting for server...", __func__);
   bool terminated = true;
   // Wait for gimbal service.
   const std::chrono::milliseconds kWaitDelayMs(250);
@@ -52,14 +52,14 @@ bool WaitForServer()
     gimbal_ready = gimbal_client->IsServerReady(kWaitDelayMs);
   } while (!gimbal_ready && rclcpp::ok());
   if (rclcpp::ok()) {
-    RCLCPP_INFO(rclcpp::get_logger("client"), "%s gimbal server ready", __FUNCTION__);
+    RCLCPP_INFO(rclcpp::get_logger("client"), "%s gimbal server ready", __func__);
     // Wait for pump action.
     int pump_ready = 0;
     do {
       pump_ready = gimbal_client->IsServerReady(kWaitDelayMs);
     } while (!pump_ready && rclcpp::ok());
     if (rclcpp::ok()) {
-      RCLCPP_INFO(rclcpp::get_logger("client"), "%s pump server ready", __FUNCTION__);
+      RCLCPP_INFO(rclcpp::get_logger("client"), "%s pump server ready", __func__);
       // Wait for the status node to be connected.
       bool status_ready = false;
       do {
@@ -69,14 +69,14 @@ bool WaitForServer()
       if (rclcpp::ok()) {
         RCLCPP_INFO(
           rclcpp::get_logger(
-            "client"), "%s status publisher ready", __FUNCTION__);
+            "client"), "%s status publisher ready", __func__);
         // Wait for the micro-controller to be connected.
         bool status_connected = false;
         do {
           status_connected = status_client->connected();
           std::this_thread::sleep_for(kWaitDelayMs);
         } while (!status_connected && rclcpp::ok());
-        RCLCPP_INFO(rclcpp::get_logger("client"), "%s connected", __FUNCTION__);
+        RCLCPP_INFO(rclcpp::get_logger("client"), "%s connected", __func__);
         if (rclcpp::ok()) {
           terminated = false;
         }
@@ -132,7 +132,7 @@ void PumpExampleCallback(bool done, float litres_pumped)
   pump_example_done = done;
   RCLCPP_INFO(
     rclcpp::get_logger("client"), "%s pumped %f litres",
-    __FUNCTION__, litres_pumped);
+    __func__, litres_pumped);
 }
 
 bool RunPumpExample()
@@ -140,9 +140,9 @@ bool RunPumpExample()
   bool terminated = false;
   const std::chrono::milliseconds kSpinDelay(100);
   const std::chrono::milliseconds kStatusDelay(600);
-  RCLCPP_INFO(rclcpp::get_logger("client"), "%s called", __FUNCTION__);
+  RCLCPP_INFO(rclcpp::get_logger("client"), "%s called", __func__);
   // Send 1.0 litres
-  RCLCPP_INFO(rclcpp::get_logger("client"), "%s send 1.0l", __FUNCTION__);
+  RCLCPP_INFO(rclcpp::get_logger("client"), "%s send 1.0l", __func__);
   float start_level_l = status_client->litres_remaining();
   pump_client->SendGoal(1.0, &PumpExampleCallback);
   // Wait until the pump has finished pumping.
@@ -153,15 +153,15 @@ bool RunPumpExample()
     }
     std::this_thread::sleep_for(kSpinDelay);
   }
-  RCLCPP_INFO(rclcpp::get_logger("client"), "%s t1 %d", __FUNCTION__, terminated);
+  RCLCPP_INFO(rclcpp::get_logger("client"), "%s t1 %d", __func__, terminated);
   if (!terminated) {
-    RCLCPP_INFO(rclcpp::get_logger("client"), "%s send 0.4l", __FUNCTION__);
+    RCLCPP_INFO(rclcpp::get_logger("client"), "%s send 0.4l", __func__);
     // Send 0.4 litres
     bool result = pump_client->SendGoalWait(0.4, &PumpExampleCallback);
     if (result) {
-      RCLCPP_INFO(rclcpp::get_logger("client"), "%s goal accepted", __FUNCTION__);
+      RCLCPP_INFO(rclcpp::get_logger("client"), "%s goal accepted", __func__);
     } else {
-      RCLCPP_INFO(rclcpp::get_logger("client"), "%s goal rejected", __FUNCTION__);
+      RCLCPP_INFO(rclcpp::get_logger("client"), "%s goal rejected", __func__);
       terminated = true;
     }
     if (!terminated) {

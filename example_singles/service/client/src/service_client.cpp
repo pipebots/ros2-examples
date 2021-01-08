@@ -39,16 +39,17 @@ static rclcpp::executors::SingleThreadedExecutor * exec;
  */
 bool WaitForServer()
 {
-  RCLCPP_INFO(rclcpp::get_logger("client"), "%s Waiting for server...", __FUNCTION__);
+  RCLCPP_INFO(rclcpp::get_logger("client"), "%s Waiting for server...", __func__);
   bool terminated = true;
   // Wait for gimbal service.
   const std::chrono::milliseconds kWaitDelayMs(250);
   int gimbal_ready = 0;
   do {
     gimbal_ready = gimbal_client->IsServerReady(kWaitDelayMs);
-  } while (!gimbal_ready && rclcpp::ok());
+    RCLCPP_INFO(rclcpp::get_logger("client"), "%s gimbal server ready", __func__);
+  } while (gimbal_ready == 0 && rclcpp::ok());
   if (rclcpp::ok()) {
-    RCLCPP_INFO(rclcpp::get_logger("client"), "%s gimbal server ready", __FUNCTION__);
+    RCLCPP_INFO(rclcpp::get_logger("client"), "%s gimbal server ready", __func__);
   }
   return terminated;
 }

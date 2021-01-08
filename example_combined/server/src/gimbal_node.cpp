@@ -54,7 +54,7 @@ void GimbalNode::HandleService(
 {
   RCLCPP_DEBUG(
     get_logger(), "%s: setting pitch %d, yaw %d",
-    __FUNCTION__, request->pitch, request->yaw);
+    __func__, request->pitch, request->yaw);
   // Send command.
   bool result = comms_->SetGimbal(request->pitch, request->yaw);
   if (result) {

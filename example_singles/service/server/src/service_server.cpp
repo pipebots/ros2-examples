@@ -30,7 +30,9 @@ int main(int argc, char * argv[])
   // Add nodes to executor.
   rclcpp::executors::SingleThreadedExecutor exec;
   exec.add_node(gimbal_node);
+  RCLCPP_INFO(rclcpp::get_logger("server"), "Spinning.");
   exec.spin();
+  RCLCPP_INFO(rclcpp::get_logger("server"), "Stopped.");
   rclcpp::shutdown();
   return 0;
 }

@@ -32,7 +32,7 @@ static const char * kStatusTopicName = "pump/status";
 StatusNode::StatusNode(rclcpp::NodeOptions options)
 : Node("status_node", options), timer_call_count_(0)
 {
-  RCLCPP_DEBUG(this->get_logger(), "%s: Called", __FUNCTION__);
+  RCLCPP_DEBUG(this->get_logger(), "%s: Called", __func__);
   publisher_ = create_publisher<example_msgs::msg::Status>(kStatusTopicName, 10);
   // Connect TimerCallback() to a timer to publish the message every kQueryIntervalMs.
   timer_ = create_wall_timer(kQueryIntervalMs, std::bind(&StatusNode::TimerCallback, this));
@@ -42,7 +42,7 @@ void StatusNode::PublishStatus(bool connected, bool running, float litres_remain
 {
   RCLCPP_INFO(
     this->get_logger(), "%s: Called, connected to %d subscribers",
-    __FUNCTION__, publisher_->get_subscription_count());
+    __func__, publisher_->get_subscription_count());
   auto message = example_msgs::msg::Status();
   message.connected = connected;
   message.running = running;
@@ -54,7 +54,7 @@ void StatusNode::TimerCallback()
 {
   RCLCPP_DEBUG(
     this->get_logger(), "%s: Called, connected to %d subscribers",
-    __FUNCTION__, publisher_->get_subscription_count());
+    __func__, publisher_->get_subscription_count());
   bool connected = false;
   bool pump_running = false;
   float litres_remaining = 0.0;
