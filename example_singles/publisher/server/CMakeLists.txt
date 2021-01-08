@@ -21,7 +21,7 @@ find_package(example_msgs REQUIRED)
 # The example status.
 set(SERVER_NAME publisher_server_exec)
 set(SRC_FILES
-  src/server.cpp
+  src/publisher_server.cpp
   src/status_node.cpp
 )
 

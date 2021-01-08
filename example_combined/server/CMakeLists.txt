@@ -29,7 +29,7 @@ find_package(example_msgs REQUIRED)
 set(SERVER_NAME ${PROJECT_NAME}_exec)
 
 set(SRC_FILES
-  src/server.cpp
+  src/combined_server.cpp
   src/communications_fake.cpp
   src/gimbal_node.cpp
   src/pump_node.cpp

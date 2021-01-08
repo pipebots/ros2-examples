@@ -22,7 +22,7 @@ find_package(example_msgs REQUIRED)
 set(CLIENT_NAME ${PROJECT_NAME}_exec)
 
 set(SRC_FILES
-  src/client.cpp
+  src/service_client.cpp
   src/gimbal_service_client.cpp
 )
 

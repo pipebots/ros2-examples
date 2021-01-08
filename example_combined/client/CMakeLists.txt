@@ -28,7 +28,7 @@ find_package(example_msgs REQUIRED)
 set(CLIENT_NAME ${PROJECT_NAME}_exec)
 
 set(SRC_FILES
-  src/client_example.cpp
+  src/combined_client.cpp
   src/status_subscriber_client.cpp
   src/gimbal_service_client.cpp
   src/pump_action_client.cpp

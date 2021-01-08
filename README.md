@@ -25,7 +25,8 @@ has details on how to build and run this project.
 
 The following demos have been implemented:
 
-* A server offering a status message publisher with a client.
+* A server offering a status message publisher with a client that subscribes
+to the publisher.
 
 All demos can be run using launch files.
 

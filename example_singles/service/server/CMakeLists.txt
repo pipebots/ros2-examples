@@ -21,7 +21,7 @@ find_package(example_msgs REQUIRED)
 set(SERVER_NAME ${PROJECT_NAME}_exec)
 
 set(SRC_FILES
-  src/server.cpp
+  src/service_server.cpp
   src/gimbal_node.cpp
 )
 

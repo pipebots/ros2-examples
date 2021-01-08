@@ -5,6 +5,8 @@
 
 docker_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &>/dev/null && pwd )"
 . ${docker_dir}/vars.bash
+mkdir -p ${WORKSPACE_DIR}
+cp ${docker_dir}/setup_*.bash ${WORKSPACE_DIR}
 
 docker container inspect ${CONTAINER_NAME} &> /dev/null
 if [ $? == 0 ]
@@ -21,8 +23,6 @@ then
     fi
 else
     # Container does not exist so run it.
-    mkdir -p ${WORKSPACE_DIR}
-    cp ${docker_dir}/setup_*.bash ${WORKSPACE_DIR}
     CODE_DIR=${docker_dir}/..
     docker container run \
         --detach \
