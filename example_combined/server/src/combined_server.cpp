@@ -30,7 +30,7 @@ static rclcpp::executors::SingleThreadedExecutor * exec;
 
 static void AutoStop() {
   // Wait for delay seconds.
-  const std::chrono::seconds kWaitDelay(20);
+  const std::chrono::seconds kWaitDelay(11);
   std::this_thread::sleep_for(kWaitDelay);
   // Stop the spin loop to automatically quit.
   exec->cancel();
