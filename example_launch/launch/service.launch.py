@@ -10,13 +10,11 @@ def generate_launch_description():
         Node(
             package='service_server',
             namespace='service_test_ns',
-            executable='service_server_exec',
-            name='s_s'
+            executable='service_server_exec'
         ),
         Node(
             package='service_client',
             namespace='service_test_ns',
-            executable='service_client_exec',
-            name='s_c'
+            executable='service_client_exec'
         )
     ])

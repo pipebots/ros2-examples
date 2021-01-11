@@ -9,13 +9,11 @@ def generate_launch_description():
         Node(
             package='publisher_server',
             namespace='publisher_test_ns',
-            executable='publisher_server_exec',
-            name='p_s'
+            executable='publisher_server_exec'
         ),
         Node(
             package='publisher_client',
             namespace='publisher_test_ns',
-            executable='publisher_client_exec',
-            name='p_c'
+            executable='publisher_client_exec'
         )
     ])

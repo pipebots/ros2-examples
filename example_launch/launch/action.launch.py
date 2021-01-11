@@ -4,8 +4,10 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    # Note: the namespace must match if the two nodes are going to talk to
+    # NOTE: the namespace must match if the two nodes are going to talk to
     # each other!
+    # NOTE: the name value overrides the name of the node specified in the
+    # code.
     return LaunchDescription([
         Node(
             package='action_server',

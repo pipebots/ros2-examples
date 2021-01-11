@@ -108,9 +108,10 @@ int main(int argc, char * argv[])
   // Start the nodes (blocks until Ctrl-c).
   exec->spin();
   // Tidy up.
-  delete exec;
   test_thread->join();
   delete test_thread;
+  // Delete the executor after the thread or std::runtime_error.
+  delete exec;
   // Make sure clients are destroyed before shutdown.
   // Will cause seg fault on exit if not done.
   status_client = nullptr;

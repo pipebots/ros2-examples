@@ -63,7 +63,7 @@ int main(int argc, char * argv[])
   exec->add_node(gimbal_node);
   exec->add_node(pump_node);
   exec->add_node(status_node);
-  // Start thread to exercise the service and action clients.
+  // Start auto-stop thread.
   auto test_thread = new std::thread(&AutoStop);
   // Spin the executor.
   exec->spin();
