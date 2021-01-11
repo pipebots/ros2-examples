@@ -34,13 +34,13 @@ public:
   void AddComms(Communications * comms);
 
 private:
-  rclcpp_action::GoalResponse Goal(
+  rclcpp_action::GoalResponse HandleGoal(
     const rclcpp_action::GoalUUID & uuid,
     std::shared_ptr<const example_msgs::action::Pump::Goal> goal);
-  rclcpp_action::CancelResponse Cancel(
+  rclcpp_action::CancelResponse HandleCancel(
     const std::shared_ptr<
       rclcpp_action::ServerGoalHandle<example_msgs::action::Pump>> goal_handle);
-  void Accepted(
+  void HandleAccepted(
     const std::shared_ptr<
       rclcpp_action::ServerGoalHandle<example_msgs::action::Pump>> goal_handle);
   void Execute(

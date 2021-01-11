@@ -47,10 +47,10 @@ PumpNode::PumpNode(rclcpp::NodeOptions options)
     get_node_waitables_interface(),
     kPumpActionName,
     std::bind(
-      &PumpNode::Goal, this,
+      &PumpNode::HandleGoal, this,
       std::placeholders::_1, std::placeholders::_2),
-    std::bind(&PumpNode::Cancel, this, std::placeholders::_1),
-    std::bind(&PumpNode::Accepted, this, std::placeholders::_1));
+    std::bind(&PumpNode::HandleCancel, this, std::placeholders::_1),
+    std::bind(&PumpNode::HandleAccepted, this, std::placeholders::_1));
 }
 
 void PumpNode::AddComms(Communications * comms)
@@ -58,7 +58,7 @@ void PumpNode::AddComms(Communications * comms)
   comms_ = comms;
 }
 
-rclcpp_action::GoalResponse PumpNode::Goal(
+rclcpp_action::GoalResponse PumpNode::HandleGoal(
   const rclcpp_action::GoalUUID & uuid,
   std::shared_ptr<const example_msgs::action::Pump::Goal> goal)
 {
@@ -67,10 +67,6 @@ rclcpp_action::GoalResponse PumpNode::Goal(
   // Reject if not enough volume remaining or not connected.
   bool connected = false;
   float litres_remaining = 0.0;
-  if (!comms_) {
-    RCLCPP_ERROR(get_logger(), "AJB: No comms!");
-    exit(1);
-  }
   comms_->GetStatus(&connected, nullptr, &litres_remaining);
   RCLCPP_INFO(get_logger(), "AJB: GetStatus: connected %d litres %f", connected, litres_remaining);
   // Reject if not enough water to fulfil request or not connected.
@@ -81,7 +77,7 @@ rclcpp_action::GoalResponse PumpNode::Goal(
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
-rclcpp_action::CancelResponse PumpNode::Cancel(
+rclcpp_action::CancelResponse PumpNode::HandleCancel(
   const std::shared_ptr<
     rclcpp_action::ServerGoalHandle<example_msgs::action::Pump>> goal_handle)
 {
@@ -90,7 +86,7 @@ rclcpp_action::CancelResponse PumpNode::Cancel(
   return rclcpp_action::CancelResponse::ACCEPT;
 }
 
-void PumpNode::Accepted(
+void PumpNode::HandleAccepted(
   const std::shared_ptr<
     rclcpp_action::ServerGoalHandle<example_msgs::action::Pump>> goal_handle)
 {
