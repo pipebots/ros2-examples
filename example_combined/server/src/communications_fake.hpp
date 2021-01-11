@@ -43,7 +43,23 @@ public:
   void GetStatus(bool * connected, bool * pump_running, float * litres_remaining) const override;
 
 private:
-  // None.
+  // This is here so that the values can be simulated so the tests run.
+  struct Status
+  {
+    bool connected;  // true when Arduino connected.
+    bool running;  // true when pump running.  Updated from Arduino.
+    float litres_remaining;  // Returned by Arduino.
+    Status()
+    : connected(false), running(false), litres_remaining(0.0)
+    {
+    }
+  };
+  // Pump simulation thread
+  void SimulatePump();
+  // ROS interface variables
+  Status status_;
+  // Simulation vars.
+  bool simulate_pump_;
 };  // CommunicationsFake
 
 #endif  // COMMUNICATIONS_FAKE_HPP_
