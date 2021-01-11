@@ -45,11 +45,31 @@ cd ~/ws
 ./setup_examples.bash
 ```
 
+## Running the examples
+
 After that, you should be able to run all the examples using the supplied
-launch files, e.g. to run the combined example,
+launch files, e.g. to run all of the examples,
 
 ```bash
 cd ~/ws
 . ./install/setup.bash
-ros2 launch example_launch combined_example.launch.py
+ros2 launch example_launch action.launch.py
+ros2 launch example_launch service.launch.py
+ros2 launch example_launch publisher.launch.py
+ros2 launch example_launch combined.launch.py
+```
+
+It is also possible to run the examples with out using the launch files.  This
+is useful when debugging ROS2 process.  A ROS2 process is an executable program
+that contains one or more nodes.  To start a ROS2 process without a
+launch file, you have to find out where the executable is and then run it.
+ROS2 processes are built in the `~/ws/build/<package name>` directory and are
+installed in the `~/ws/install/<package name>/lib/<package name>` directory.
+For instance, to run the `action_client` process, you can use the commands:
+
+```bash
+cd ~/ws
+. ./install/setup.bash
+./build/action_client/action_client_exec
+./install/action_client/lib/action_client/action_client_exec
 ```

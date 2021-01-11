@@ -67,8 +67,13 @@ rclcpp_action::GoalResponse PumpNode::Goal(
   // Reject if not enough volume remaining or not connected.
   bool connected = false;
   float litres_remaining = 0.0;
+  if (!comms_) {
+    RCLCPP_ERROR(get_logger(), "AJB: No comms!");
+    exit(1);
+  }
   comms_->GetStatus(&connected, nullptr, &litres_remaining);
   RCLCPP_INFO(get_logger(), "AJB: GetStatus: connected %d litres %f", connected, litres_remaining);
+  // Reject if not enough water to fulfil request or not connected.
   // Add a bit on to make sure that float rounding errors don't affect functionality.
   if (!connected || (litres_remaining + 0.1) < goal->litres_to_pump) {
     return rclcpp_action::GoalResponse::REJECT;

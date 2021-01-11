@@ -27,6 +27,8 @@ The following demos have been implemented:
 
 * A server offering a status message publisher with a client that subscribes
 to the publisher.
+* A server offering a single service with a client that uses that service.
+* A server offering a single action with a client that uses that action.
 
 All demos can be run using launch files.
 
@@ -34,6 +36,3 @@ Implemented but broken
 
 * Combined server that offers a message publisher, service server and
 action server with a client that uses all three interfaces.
-* A server offering a single service with a client that uses that service.
-* A server offering a single action with a client that uses that action.
-* A server offering a subscriber with a client and launch file.
