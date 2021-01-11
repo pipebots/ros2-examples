@@ -30,8 +30,11 @@ static rclcpp::executors::SingleThreadedExecutor * exec;
 
 static void AutoStop() {
   // Wait for delay seconds.
-  const std::chrono::seconds kWaitDelay(11);
-  std::this_thread::sleep_for(kWaitDelay);
+  int delay_s = 11;
+  for (int i = 0; rclcpp::ok() && i < delay_s; ++i) {
+    const std::chrono::seconds kWaitDelay(1);
+    std::this_thread::sleep_for(kWaitDelay);
+  }
   // Stop the spin loop to automatically quit.
   exec->cancel();
   RCLCPP_INFO(rclcpp::get_logger("server"), "Completed :-)");
@@ -65,9 +68,10 @@ int main(int argc, char * argv[])
   // Spin the executor.
   exec->spin();
   // Tidy up.
-  delete exec;
   test_thread->join();
   delete test_thread;
+  // exec must be deleted after the thread or it throws a std::runtime_error.
+  delete exec;
   delete comms;
   rclcpp::shutdown();
   return 0;
