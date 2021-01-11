@@ -37,6 +37,9 @@ static std::shared_ptr<StatusSubscriber> status_client;
 static std::shared_ptr<GimbalServiceClient> gimbal_client;
 static std::shared_ptr<PumpActionClient> pump_client;
 
+// Pointer to executor so that the spin loop can be kill by the thread.
+static rclcpp::executors::SingleThreadedExecutor * exec;
+
 /**
  * @brief Blocks until the server is ready.
  * @return true if terminated, false on success.
@@ -200,13 +203,14 @@ void RunExamples()
       terminated = RunPumpExample();
       if (!terminated) {
         RCLCPP_INFO(rclcpp::get_logger("client"), "Examples complete.");
+        // Stop the executor spin loop to automatically quit.
+        exec->cancel();
       }
     }
   }
   if (terminated) {
     RCLCPP_INFO(rclcpp::get_logger("client"), "Examples terminated early.");
   }
-  RCLCPP_INFO(rclcpp::get_logger("client"), "Press Ctrl+C to exit.");
 }
 
 int main(int argc, char * argv[])
@@ -216,14 +220,14 @@ int main(int argc, char * argv[])
   gimbal_client = std::make_shared<GimbalServiceClient>();
   pump_client = std::make_shared<PumpActionClient>();
   // Add nodes to executor.
+  exec = new rclcpp::executors::SingleThreadedExecutor();
   // NOTE: The gimbal service is NOT an rclcpp::Node so does not need an executor.
-  rclcpp::executors::SingleThreadedExecutor exec;
-  exec.add_node(status_client);
-  exec.add_node(pump_client);
+  exec->add_node(status_client);
+  exec->add_node(pump_client);
   // Start thread to exercise the service and action clients.
   auto test_thread = new std::thread(&RunExamples);
   // Start the nodes (blocks until Ctrl-c).
-  exec.spin();
+  exec->spin();
   // Tidy up.
   test_thread->join();
   delete test_thread;

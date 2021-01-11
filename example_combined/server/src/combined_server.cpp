@@ -25,6 +25,18 @@
 #include "communications.hpp"
 #include "communications_fake.hpp"
 
+// Pointer to executor so that the spin loop can be kill by the thread.
+static rclcpp::executors::SingleThreadedExecutor * exec;
+
+static void AutoStop() {
+  // Wait for delay seconds.
+  const std::chrono::seconds kWaitDelay(20);
+  std::this_thread::sleep_for(kWaitDelay);
+  // Stop the spin loop to automatically quit.
+  exec->cancel();
+  RCLCPP_INFO(rclcpp::get_logger("server"), "Completed :-)");
+}
+
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
@@ -44,12 +56,19 @@ int main(int argc, char * argv[])
   pump_node->AddComms(comms);
   status_node->AddComms(comms);
   // Add nodes to executor.
-  rclcpp::executors::SingleThreadedExecutor exec;
-  exec.add_node(gimbal_node);
-  exec.add_node(pump_node);
-  exec.add_node(status_node);
-  exec.spin();
-  rclcpp::shutdown();
+  exec = new rclcpp::executors::SingleThreadedExecutor();
+  exec->add_node(gimbal_node);
+  exec->add_node(pump_node);
+  exec->add_node(status_node);
+  // Start thread to exercise the service and action clients.
+  auto test_thread = new std::thread(&AutoStop);
+  // Spin the executor.
+  exec->spin();
+  // Tidy up.
+  delete exec;
+  test_thread->join();
+  delete test_thread;
   delete comms;
+  rclcpp::shutdown();
   return 0;
 }
