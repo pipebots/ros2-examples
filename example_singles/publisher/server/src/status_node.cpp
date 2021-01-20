@@ -75,7 +75,6 @@ void StatusNode::TimerCallback()
     exit(0);
   }
 #endif
-
 }
 
 #include "rclcpp_components/register_node_macro.hpp"

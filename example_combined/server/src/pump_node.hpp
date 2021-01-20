@@ -31,7 +31,7 @@ class PumpNode : public rclcpp::Node
 {
 public:
   explicit PumpNode(rclcpp::NodeOptions options);
-  void AddComms(Communications * comms);
+  void AddComms(std::shared_ptr<Communications> comms);
 
 private:
   rclcpp_action::GoalResponse HandleGoal(
@@ -48,7 +48,7 @@ private:
       rclcpp_action::ServerGoalHandle<example_msgs::action::Pump>> goal_handle);
 
   rclcpp_action::Server<example_msgs::action::Pump>::SharedPtr server_;
-  Communications * comms_;
+  std::shared_ptr<Communications> comms_;
 };
 
 #endif  // PUMP_NODE_HPP_

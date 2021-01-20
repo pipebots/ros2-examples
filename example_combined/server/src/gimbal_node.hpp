@@ -29,7 +29,7 @@ class GimbalNode : public rclcpp::Node
 {
 public:
   explicit GimbalNode(rclcpp::NodeOptions options);
-  void AddComms(Communications * comms);
+  void AddComms(std::shared_ptr<Communications> comms);
 
 private:
   void HandleService(
@@ -37,7 +37,7 @@ private:
     const std::shared_ptr<example_msgs::srv::Gimbal::Request> request,
     const std::shared_ptr<example_msgs::srv::Gimbal::Response> response);
   std::shared_ptr<rclcpp::Service<example_msgs::srv::Gimbal>> server_;
-  Communications * comms_;
+  std::shared_ptr<Communications> comms_;
 };
 
 #endif  // GIMBAL_NODE_HPP_

@@ -53,8 +53,9 @@ PumpNode::PumpNode(rclcpp::NodeOptions options)
     std::bind(&PumpNode::HandleAccepted, this, std::placeholders::_1));
 }
 
-void PumpNode::AddComms(Communications * comms)
+void PumpNode::AddComms(std::shared_ptr<Communications> comms)
 {
+  // The copy of the parameter adds 1 to the shared_ptr reference count.
   comms_ = comms;
 }
 

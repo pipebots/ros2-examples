@@ -37,8 +37,9 @@ StatusNode::StatusNode(rclcpp::NodeOptions options)
   timer_ = create_wall_timer(kQueryIntervalMs, std::bind(&StatusNode::TimerCallback, this));
 }
 
-void StatusNode::AddComms(Communications * comms)
+void StatusNode::AddComms(std::shared_ptr<Communications> comms)
 {
+  // The copy of the parameter adds 1 to the shared_ptr reference count.
   comms_ = comms;
 }
 

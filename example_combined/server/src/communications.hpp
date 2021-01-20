@@ -21,8 +21,11 @@
 #ifndef COMMUNICATIONS_HPP_
 #define COMMUNICATIONS_HPP_
 
-/** Base class for communications with the pump micro-controller.
+/** @brief Base class for communications with the pump micro-controller.
  * This allows different implementations including a fake version for testing.
+ * @note The communications object is shared by three nodes so care must be
+ * taken when accessing member variables and shared resources otherwise
+ * race conditions can occur.
  */
 class Communications
 {

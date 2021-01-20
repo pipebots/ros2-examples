@@ -42,8 +42,9 @@ GimbalNode::GimbalNode(rclcpp::NodeOptions options)
       std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
-void GimbalNode::AddComms(Communications * comms)
+void GimbalNode::AddComms(std::shared_ptr<Communications> comms)
 {
+  // The copy of the parameter adds 1 to the shared_ptr reference count.
   comms_ = comms;
 }
 
