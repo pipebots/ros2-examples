@@ -73,3 +73,15 @@ cd ~/ws
 ./build/action_client/action_client_exec
 ./install/action_client/lib/action_client/action_client_exec
 ```
+
+## Notes on launch files
+
+Most launch files use the node name specified in the C++ code but the action
+example overrides the node name in the code with a different node name.
+NOTE: overriding the node name on processes with multiple nodes, e.g.
+the combined example, can cause unexpected side-effects and generate error
+messages like this:
+
+```text
+[combined_client_exec-2] [WARN] [1610374430.338857556] [rcl.logging_rosout]: Publisher already registered for provided node name. If this is due to multiple nodes with the same name then all logs for that logger name will go out over the existing publisher. As soon as any node with that name is destructed it will unregister the publisher, preventing any further logs for that name from being published on the rosout topic.
+```
