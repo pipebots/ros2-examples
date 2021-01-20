@@ -34,7 +34,8 @@ std::unique_ptr<std::thread> test_thread;
 // Simulation delay.
 const std::chrono::milliseconds kWaitDelayMs(500);
 
-CommunicationsFake::CommunicationsFake() : simulate_pump_(false)
+CommunicationsFake::CommunicationsFake()
+: simulate_pump_(false)
 {
   // Need to use the result to prevent "warning: ignoring return value of".
   // '(void) function' doesn't work!  Probably due to -Wpedantic being enabled.
@@ -89,7 +90,8 @@ void CommunicationsFake::GetStatus(
   float * litres_remaining) const
 {
   // This is the same as the real code.
-  RCUTILS_LOG_INFO_NAMED("Comms", "%s: connected %d, running %d, remaining %f",
+  RCUTILS_LOG_INFO_NAMED(
+    "Comms", "%s: connected %d, running %d, remaining %f",
     __FUNCTION__, status_.connected, status_.running, status_.litres_remaining);
   // This allows nullptr to be passed by caller if value not needed.
   if (connected) {
@@ -103,7 +105,8 @@ void CommunicationsFake::GetStatus(
   }
 }
 
-void CommunicationsFake::SimulatePump() {
+void CommunicationsFake::SimulatePump()
+{
   simulate_pump_ = true;
   while (simulate_pump_) {
     // Fake the water level going down.

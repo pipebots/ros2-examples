@@ -83,7 +83,8 @@ void RunExamples()
       status_ready = status_client->IsServerReady();
       std::this_thread::sleep_for(kWaitDelayMs);
       ++loop_count;
-      RCLCPP_INFO(rclcpp::get_logger("client"),
+      RCLCPP_INFO(
+        rclcpp::get_logger("client"),
         "%s: status_ready %d, loop_count %d",
         __func__, status_ready, loop_count);
     } while (status_ready && rclcpp::ok() && loop_count < 30);

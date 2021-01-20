@@ -31,10 +31,9 @@ int main(int argc, char * argv[])
 #if 1
   // This code spins the node regularly for 10 loops and then exits.
   // Just so the demos run without user interaction.
-  for (int loop_counter = 0; rclcpp::ok() && loop_counter < 10; ++loop_counter)
-  {
-      std::this_thread::sleep_for(std::chrono::milliseconds(250));
-      rclcpp::spin_some(gimbal_node);
+  for (int loop_counter = 0; rclcpp::ok() && loop_counter < 10; ++loop_counter) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    rclcpp::spin_some(gimbal_node);
   }
 #else
   // This is what normally happens.

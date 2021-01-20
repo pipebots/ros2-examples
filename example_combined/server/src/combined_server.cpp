@@ -28,7 +28,8 @@
 // Pointer to executor so that the spin loop can be kill by the thread.
 static std::unique_ptr<rclcpp::executors::SingleThreadedExecutor> exec;
 
-static void AutoStop() {
+static void AutoStop()
+{
   // Wait for delay seconds.
   int delay_s = 11;
   for (int i = 0; rclcpp::ok() && i < delay_s; ++i) {
