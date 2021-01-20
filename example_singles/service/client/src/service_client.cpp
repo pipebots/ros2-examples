@@ -20,18 +20,15 @@
 // Code based on examples from here: https://github.com/ros2/examples
 
 #include <memory>
-
 #include "rclcpp/rclcpp.hpp"
-
 #include "example_msgs/srv/gimbal.hpp"
-
 #include "gimbal_service_client.hpp"
 
 // Static vars for sharing objects with RunTests().
 static std::shared_ptr<GimbalServiceClient> gimbal_client;
 
 // Pointer to executor so that the spin loop can be kill by the thread.
-static rclcpp::executors::SingleThreadedExecutor * exec;
+static std::unique_ptr<rclcpp::executors::SingleThreadedExecutor> exec;
 
 /**
  * @brief Blocks until the server is ready.
@@ -117,14 +114,15 @@ int main(int argc, char * argv[])
   // NOTE: The gimbal service is NOT an rclcpp::Node so does not need an
   // executor.  However, an executor is still needed to cause this thread
   // to wait until the test code completes.
-  exec = new rclcpp::executors::SingleThreadedExecutor();
+  exec = std::make_unique<rclcpp::executors::SingleThreadedExecutor>();
   // Start thread to exercise the service and action clients.
-  auto test_thread = new std::thread(&RunExamples);
+  auto test_thread = std::make_unique<std::thread>(&RunExamples);
   // Blocks until Ctrl+C.
   exec->spin();
   // Tidy up.
   test_thread->join();
-  delete test_thread;
+  // Delete the thread before the executor to prevent std::runtime_error.
+  test_thread.reset(nullptr);
   // Make sure clients are closed before shutdown.
   // Can cause seg fault on exit if not done.
   gimbal_client = nullptr;

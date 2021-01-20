@@ -137,12 +137,13 @@ int main(int argc, char * argv[])
   rclcpp::executors::SingleThreadedExecutor exec;
   exec.add_node(pump_client);
   // Start thread to exercise the service and action clients.
-  auto test_thread = new std::thread(&RunExamples);
-  // Start the nodes (blocks until Ctrl-c).
+  auto test_thread = std::make_unique<std::thread>(&RunExamples);
+  // Start the nodes (blocks until Ctrl+C).
   exec.spin();
   // Tidy up.
   test_thread->join();
-  delete test_thread;
+  // Delete the thread before the executor to prevent std::runtime_error.
+  test_thread.reset(nullptr);
   // Make sure clients are closed before shutdown.
   // Can cause seg fault on exit if not done.
   pump_client = nullptr;

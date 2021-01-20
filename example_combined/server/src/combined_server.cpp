@@ -26,7 +26,7 @@
 #include "communications_fake.hpp"
 
 // Pointer to executor so that the spin loop can be kill by the thread.
-static rclcpp::executors::SingleThreadedExecutor * exec;
+static std::unique_ptr<rclcpp::executors::SingleThreadedExecutor> exec;
 
 static void AutoStop() {
   // Wait for delay seconds.
@@ -50,7 +50,7 @@ int main(int argc, char * argv[])
   auto status_node = std::make_shared<StatusNode>(options);
   // The virtual class is used so that fake, mocked or real implementations
   // can be used (dependency injection).
-  Communications * comms = new CommunicationsFake();
+  auto comms = std::make_shared<CommunicationsFake>();
   // Instantiate communications and open port.
   // If this fails, an exception will be thrown.
   comms->Init();
@@ -59,20 +59,22 @@ int main(int argc, char * argv[])
   pump_node->AddComms(comms);
   status_node->AddComms(comms);
   // Add nodes to executor.
-  exec = new rclcpp::executors::SingleThreadedExecutor();
+  exec = std::make_unique<rclcpp::executors::SingleThreadedExecutor>();
   exec->add_node(gimbal_node);
   exec->add_node(pump_node);
   exec->add_node(status_node);
   // Start auto-stop thread.
-  auto test_thread = new std::thread(&AutoStop);
+  auto test_thread = std::make_unique<std::thread>(&AutoStop);
   // Spin the executor.
   exec->spin();
   // Tidy up.
   test_thread->join();
-  delete test_thread;
-  // exec must be deleted after the thread or it throws a std::runtime_error.
-  delete exec;
-  delete comms;
+  // Delete the thread before the executor to prevent std::runtime_error.
+  test_thread.reset(nullptr);
+  // Make sure executor and clients are closed before shutdown.
+  // Can cause seg fault on exit if not done.
+  exec.reset(nullptr);
+  comms = nullptr;
   rclcpp::shutdown();
   return 0;
 }

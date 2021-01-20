@@ -20,19 +20,16 @@
 // Code based on examples from here: https://github.com/ros2/examples
 
 #include <memory>
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
-
 #include "example_msgs/msg/status.hpp"
-
 #include "status_subscriber_client.hpp"
 
 // Static vars for sharing objects with RunTests().
 static std::shared_ptr<StatusSubscriber> status_client;
 
-// Pointer to executor so that the spin loop can be kill by the thread.
-static rclcpp::executors::SingleThreadedExecutor * exec;
+// Pointer to executor so that the spin loop can kill the thread.
+static std::unique_ptr<rclcpp::executors::SingleThreadedExecutor> exec;
 
 /**
  * @brief Blocks until the server is ready.
@@ -101,17 +98,16 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
   status_client = std::make_shared<StatusSubscriber>();
   // Add nodes to executor.
-  exec = new rclcpp::executors::SingleThreadedExecutor();
+  exec = std::make_unique<rclcpp::executors::SingleThreadedExecutor>();
   exec->add_node(status_client);
   // Start thread to exercise the service and action clients.
-  auto test_thread = new std::thread(&RunExamples);
-  // Start the nodes (blocks until Ctrl-c).
+  auto test_thread = std::make_unique<std::thread>(&RunExamples);
+  // Start the nodes (blocks until Ctrl+C).
   exec->spin();
   // Tidy up.
   test_thread->join();
-  delete test_thread;
-  // Delete the executor after the thread or std::runtime_error.
-  delete exec;
+  // Delete the thread before the executor to prevent std::runtime_error.
+  test_thread.reset(nullptr);
   // Make sure clients are destroyed before shutdown.
   // Will cause seg fault on exit if not done.
   status_client = nullptr;

@@ -29,14 +29,14 @@ class StatusNode : public rclcpp::Node
 {
 public:
   explicit StatusNode(rclcpp::NodeOptions options);
-  void AddComms(Communications * comms);
+  void AddComms(std::shared_ptr<Communications> comms);
   void PublishStatus(bool connected, bool running, float litres_remaining);
 
 private:
   void TimerCallback();
   rclcpp::Publisher<example_msgs::msg::Status>::SharedPtr publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
-  Communications * comms_;
+  std::shared_ptr<Communications> comms_;
 };
 
 #endif  // STATUS_NODE_HPP_

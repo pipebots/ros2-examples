@@ -30,7 +30,8 @@
 #include "rclcpp/rclcpp.hpp"
 
 // Thread to simulate pump.
-std::thread * test_thread;
+std::unique_ptr<std::thread> test_thread;
+// Simulation delay.
 const std::chrono::milliseconds kWaitDelayMs(500);
 
 CommunicationsFake::CommunicationsFake() : simulate_pump_(false)
@@ -40,7 +41,7 @@ CommunicationsFake::CommunicationsFake() : simulate_pump_(false)
   rcutils_ret_t result = rcutils_logging_set_logger_level("Comms", RCUTILS_LOG_SEVERITY_DEBUG);
   (void) result;
   // Mock. Run a thread to simulate the water being pumped when the pump is running.
-  test_thread = new std::thread(&CommunicationsFake::SimulatePump, this);
+  test_thread = std::make_unique<std::thread>(&CommunicationsFake::SimulatePump, this);
   // Simulate full tank.
   status_.litres_remaining = 4.0;
 }
@@ -49,7 +50,6 @@ CommunicationsFake::~CommunicationsFake()
 {
   simulate_pump_ = false;
   test_thread->join();
-  delete test_thread;
 }
 
 void CommunicationsFake::Init()
